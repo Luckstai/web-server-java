@@ -147,19 +147,19 @@ public class HttpRequest extends Thread {
 			
 			conn = ConnectionBD.conectar();
 			
-			conn.setAutoCommit(false);
-			
 			log = new LogRequest(getRequestedPath(), getHttpMethod(), getIp(), 200);
 			log.register(conn);
-			conn.commit();
 			
 			switch (getHttpMethod()) {
-			case METHOD_GET:							
+			case METHOD_GET:						
+//				if(response.getContentType().equals("image/jpeg")) {
+//					System.out.println(content);
+//				}
 				response.send(content);
 				
 				break;
 			case METHOD_HEAD:
-				response.send(content);
+				response.send("");
 				
 				break;
 			case METHOD_POST:
