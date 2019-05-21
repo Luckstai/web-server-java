@@ -1,6 +1,7 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -8,7 +9,6 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import dao.ConnectionBD;
 import model.LogRequest;
@@ -18,9 +18,10 @@ public class HttpRequest extends Thread {
 	static final String BASE_PATH = Paths.get(".").toAbsolutePath().normalize().toString() + "\\public";
 	static final String METHOD_GET = "GET";
 	static final String METHOD_HEAD = "HEAD";
-	static final String METHOD_POST = "POST";
 	
 	List<String> request = new ArrayList<>();
+	List<String> pagesToRender = new ArrayList<>();
+	
 	private String httpMethod;
 	private String requestedPath;
 	final private String REGEX = "\"([/])\"";
@@ -77,8 +78,59 @@ public class HttpRequest extends Thread {
 		System.out.println("------------------------------------------------------");
 	}
 	
+	private void defineRender(String extension) {
+		switch (extension) {
+		case "html":
+			response.setContentType("text/html");
+			path = BASE_PATH + getRequestedPath();
+			break;
+
+		case "css":
+			response.setContentType("text/css");
+			path = BASE_PATH + "\\assets\\css" + getRequestedPath();
+			break;		
+			
+		case "js":
+			response.setContentType("application/javascript");
+			path = BASE_PATH + "\\assets\\js" + getRequestedPath();
+			break;					
+			
+		case "png":
+			response.setContentType("image/png");
+			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			break;	
+
+		case "jpg":
+			response.setContentType("image/jpeg");
+			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			break;				
+			
+		case "jpeg":
+			response.setContentType("image/jpeg");
+			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			break;					
+			
+		case "ico":
+			response.setContentType("image/x-icon");
+			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			break;					
+							
+		default:
+			response.setContentType("text/html");
+			path = BASE_PATH + "\\pages\\errors\\error-400.html";
+			break;
+		}
+	}
+	
 	public void run() {
 
+		String content = "";
+		int statusCode = 500;
+		byte[] fileInBytes = new byte[0];
+		int numOfBytes = 0;
+		
+		pagesToRender.add("/reports.html");
+		
 		try {
 			System.out.println("Client " + connectedClient.getInetAddress() + ":" + connectedClient.getPort() + " connected!");
 			setIp(""+connectedClient.getInetAddress());
@@ -95,82 +147,89 @@ public class HttpRequest extends Thread {
 			int position = getRequestedPath().lastIndexOf(".");
 			
 			if(position != -1) extension = getRequestedPath().substring(position+1);
-	
-			switch (extension) {
-			case "html":
-				response.setContentType("text/html");
-				path = BASE_PATH + getRequestedPath();
+
+			
+			switch (getHttpMethod()) {
+			case METHOD_GET:						
+
+					this.defineRender(extension);
+					
+					content = "<!DOCTYPE html>\r\n" + 
+							"<html lang=\"pt-br\">\r\n" + 
+							"  <head>\r\n" + 
+							"    <title>index</title>\r\n" + 
+							"    <meta charset=\"utf-8\">\r\n" + 
+							"	<link rel=\"stylesheet\" href=\"style.css\" />\r\n" + 
+							"  <!-- Load c3.css -->\r\n" + 
+							"  <link href=\"lib/c3-charts/c3.css\" rel=\"stylesheet\">\r\n" + 
+							"  </head>\r\n" + 
+							"  <body>\r\n" + 
+							"    <h1>REPORTS</h1>\r\n" + 
+							"    \r\n" + 
+							"    <div id=\"chart\"></div>\r\n" + 
+							"\r\n" + 
+							"    <!-- Scripts -->\r\n" + 
+							"			<script src=\"lib/jquery/jquery-3.4.0.min.js\"></script>\r\n" + 
+							"      <script src=\"lib/d3-charts/d3.min.js\" charset=\"utf-8\"></script>\r\n" + 
+							"      <script src=\"lib/c3-charts/c3.min.js\"></script>\r\n" + 
+							"			<script src=\"home.js\"></script>\r\n" + 
+							"      <script type=\"text/javascript\">\r\n" + 
+							"        var chart = c3.generate({\r\n" + 
+							"          bindto: '#chart',\r\n" + 
+							"          data: {\r\n" + 
+							"            columns: [\r\n" + 
+							"              ['data1', 30, 200, 100, 400, 150, 250],\r\n" + 
+							"              ['data2', 50, 20, 10, 40, 15, 25]\r\n" + 
+							"            ]\r\n" + 
+							"          }\r\n" + 
+							"      });\r\n" + 
+							"      </script>\r\n" + 
+							"  </body>\r\n" + 
+							"</html>";
+					
+					this.defineRender(extension);
+					
+					File file = new File (path);
+					if(file.exists()) {
+						numOfBytes = (int) file.length();
+						FileInputStream inFile =  new FileInputStream(path);
+						fileInBytes = new byte[numOfBytes];
+						inFile.read(fileInBytes);
+					} 
+					else {
+						
+						for (String page : pagesToRender) {
+							if(getRequestedPath().equals(page)) {
+								System.out.println(getRequestedPath());
+								numOfBytes = (int) content.length();
+								fileInBytes = content.getBytes();
+							} else {
+								this.defineRender("error");
+								numOfBytes = (int) file.length();
+								FileInputStream inFile =  new FileInputStream(path);
+								fileInBytes = new byte[numOfBytes];
+								inFile.read(fileInBytes);
+							}
+						}
+						
+						
+					}				
+				
 				break;
-
-			case "css":
-				response.setContentType("text/css");
-				path = BASE_PATH + "\\assets\\css" + getRequestedPath();
-				break;		
+			case METHOD_HEAD:
 				
-			case "js":
-				response.setContentType("application/javascript");
-				path = BASE_PATH + "\\assets\\js" + getRequestedPath();
-				break;					
-				
-			case "png":
-				response.setContentType("image/png");
-				path = BASE_PATH + "\\assets\\image" + getRequestedPath();
-				break;	
-
-			case "jpg":
-				response.setContentType("image/jpeg");
-				path = BASE_PATH + "\\assets\\image" + getRequestedPath();
-				break;				
-				
-			case "jpeg":
-				response.setContentType("image/jpeg");
-				path = BASE_PATH + "\\assets\\image" + getRequestedPath();
-				break;					
-				
-			case "ico":
-				response.setContentType("image/x-icon");
-				path = BASE_PATH + "\\assets\\image" + getRequestedPath();
-				break;					
-								
+				break;
 			default:
-				response.setContentType("text/html");
-				path = BASE_PATH + "\\pages\\errors\\error-404.html";
+		
 				break;
 			}
-		
-			System.out.println("FILE: " + path);
-			FileInputStream file =  new FileInputStream(path);
-			Scanner sc = new Scanner(file);
-			String content = "";
-			while(sc.hasNext()) content += sc.nextLine();
-			sc.close();
 			
 			conn = ConnectionBD.conectar();
 			
 			log = new LogRequest(getRequestedPath(), getHttpMethod(), getIp(), 200);
 			log.register(conn);
+			response.send(fileInBytes, numOfBytes);
 			
-			switch (getHttpMethod()) {
-			case METHOD_GET:						
-//				if(response.getContentType().equals("image/jpeg")) {
-//					System.out.println(content);
-//				}
-				response.send(content);
-				
-				break;
-			case METHOD_HEAD:
-				response.send("");
-				
-				break;
-			case METHOD_POST:
-				response.send(content);
-				
-				break;
-			default:
-				response.send(content);
-		
-				break;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

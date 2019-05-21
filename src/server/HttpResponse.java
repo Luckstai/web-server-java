@@ -70,11 +70,11 @@ public class HttpResponse {
 		
 	}
 	
-	public void send(String content) throws IOException {
+	public void send(byte[] fileInBytes, int numOfBytes) throws IOException {
 		outToClient = new DataOutputStream(conn.getOutputStream());
-		setContentLength(content.length());
+		setContentLength(numOfBytes);
 		outToClient.writeBytes(getHeader());
-		outToClient.writeBytes(content);
+		outToClient.write(fileInBytes, 0, numOfBytes);
 		outToClient.close();
 	}
 }
