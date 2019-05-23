@@ -21,6 +21,7 @@ public class HttpRequest extends Thread {
 	
 	List<String> request = new ArrayList<>();
 	List<String> pagesToRender = new ArrayList<>();
+	List<StaticPage> staticPages = new ArrayList<>();
 	
 	private String httpMethod;
 	private String requestedPath;
@@ -130,6 +131,8 @@ public class HttpRequest extends Thread {
 		int numOfBytes = 0;
 		
 		pagesToRender.add("/reports.html");
+//		pagesToRender.add("/reports2.html");
+		
 		
 		try {
 			System.out.println("Client " + connectedClient.getInetAddress() + ":" + connectedClient.getPort() + " connected!");
@@ -144,48 +147,27 @@ public class HttpRequest extends Thread {
 			
 			if(getRequestedPath().equals("/")) setRequestedPath("/index.html");
 			
-			int position = getRequestedPath().lastIndexOf(".");
+			int positionPoint = getRequestedPath().lastIndexOf(".");
 			
-			if(position != -1) extension = getRequestedPath().substring(position+1);
+			if(positionPoint != -1) extension = getRequestedPath().substring(positionPoint+1);
 
 			
 			switch (getHttpMethod()) {
 			case METHOD_GET:						
 
 					this.defineRender(extension);
+					DynamicPage dynamicPages = new DynamicPage();
 					
-					content = "<!DOCTYPE html>\r\n" + 
-							"<html lang=\"pt-br\">\r\n" + 
-							"  <head>\r\n" + 
-							"    <title>index</title>\r\n" + 
-							"    <meta charset=\"utf-8\">\r\n" + 
-							"	<link rel=\"stylesheet\" href=\"style.css\" />\r\n" + 
-							"  <!-- Load c3.css -->\r\n" + 
-							"  <link href=\"lib/c3-charts/c3.css\" rel=\"stylesheet\">\r\n" + 
-							"  </head>\r\n" + 
-							"  <body>\r\n" + 
-							"    <h1>REPORTS</h1>\r\n" + 
-							"    \r\n" + 
-							"    <div id=\"chart\"></div>\r\n" + 
-							"\r\n" + 
-							"    <!-- Scripts -->\r\n" + 
-							"			<script src=\"lib/jquery/jquery-3.4.0.min.js\"></script>\r\n" + 
-							"      <script src=\"lib/d3-charts/d3.min.js\" charset=\"utf-8\"></script>\r\n" + 
-							"      <script src=\"lib/c3-charts/c3.min.js\"></script>\r\n" + 
-							"			<script src=\"home.js\"></script>\r\n" + 
-							"      <script type=\"text/javascript\">\r\n" + 
-							"        var chart = c3.generate({\r\n" + 
-							"          bindto: '#chart',\r\n" + 
-							"          data: {\r\n" + 
-							"            columns: [\r\n" + 
-							"              ['data1', 30, 200, 100, 400, 150, 250],\r\n" + 
-							"              ['data2', 50, 20, 10, 40, 15, 25]\r\n" + 
-							"            ]\r\n" + 
-							"          }\r\n" + 
-							"      });\r\n" + 
-							"      </script>\r\n" + 
-							"  </body>\r\n" + 
-							"</html>";
+					if(this.getRequestedPath().equals("/reports.html")) {
+						content = "";
+						content = dynamicPages.mostAccessedPageReport();
+					}
+					System.out.println("AQUIIIIIIIIIIIIIIIII" + this.getRequestedPath());
+					if(this.getRequestedPath().equals("/reports2.html")) {
+						content = "";
+						content = dynamicPages.statusCodePageReport();
+						System.out.println("FINAAAAAAAAL" + content);
+					}
 					
 					this.defineRender(extension);
 					
@@ -211,8 +193,6 @@ public class HttpRequest extends Thread {
 								inFile.read(fileInBytes);
 							}
 						}
-						
-						
 					}				
 				
 				break;
