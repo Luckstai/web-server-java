@@ -16,11 +16,14 @@ import model.LogRequest;
 public class HttpRequest extends Thread {
 
 	static final String BASE_PATH = Paths.get(".").toAbsolutePath().normalize().toString() + "\\public";
+	//static final String BASE_PATH = RAIZ
+	//BASE_PATH = PUBLIC PAGES
+	//BASE PATH = PRIVATE PAGES
 	static final String METHOD_GET = "GET";
 	static final String METHOD_HEAD = "HEAD";
 	
 	List<String> request = new ArrayList<>();
-	List<String> pagesToRender = new ArrayList<>();
+	
 	List<StaticPage> staticPages = new ArrayList<>();
 	
 	private String httpMethod;
@@ -124,7 +127,7 @@ public class HttpRequest extends Thread {
 	}
 	
 	public void run() {
-
+		List<String> pagesToRender = new ArrayList<>();
 		String content = "";
 		int statusCode = 500;
 		byte[] fileInBytes = new byte[0];
@@ -159,19 +162,21 @@ public class HttpRequest extends Thread {
 					DynamicPage dynamicPages = new DynamicPage();
 					
 					if(this.getRequestedPath().equals("/reports.html")) {
-						content = "";
 						content = dynamicPages.mostAccessedPageReport();
 					}
-					System.out.println("AQUIIIIIIIIIIIIIIIII" + this.getRequestedPath());
+
 					if(this.getRequestedPath().equals("/reports2.html")) {
-						content = "";
 						content = dynamicPages.statusCodePageReport();
-						System.out.println("FINAAAAAAAAL" + content);
+					}
+
+					File file;
+					if(this.getRequestedPath().equals("/reports.html")) {
+						path = "C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html";
+						file = new File ("C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html");
+					} else {
+						file = new File(path);
 					}
 					
-					this.defineRender(extension);
-					
-					File file = new File (path);
 					if(file.exists()) {
 						numOfBytes = (int) file.length();
 						FileInputStream inFile =  new FileInputStream(path);

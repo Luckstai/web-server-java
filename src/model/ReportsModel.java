@@ -7,68 +7,51 @@ import java.sql.SQLException;
 
 public class ReportsModel {
 	
-	private int id;
-	private String requestedFile;
-	private String methodHttp;
-	private String ip;
-	private int statusCode;
+	private String content = "";
+	private String table = "log_access";
 	
 	public ReportsModel() {
 		
 	}
 	
-	public ReportsModel(int id) {
-		this.id = id;
+	private String getContent() {
+		return this.content;
 	}
 	
-	public ReportsModel(String file, String method, String ip, int statusCode) {
-		this.requestedFile = file;
-		this.methodHttp = method;
-		this.ip = ip;
-		this.statusCode = statusCode;
+	private void setContent(String content) {
+		this.content += content;
 	}
 	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getRequestedFile() {
-		return requestedFile;
-	}
-	public void setRequestedFile(String requestedFile) {
-		this.requestedFile = requestedFile;
-	}
-	public String getMethodHttp() {
-		return methodHttp;
-	}
-	public void setMethodHttp(String methodHttp) {
-		this.methodHttp = methodHttp;
-	}
-	public String getIp() {
-		return ip;
-	}
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	public int getStatusCode() {
-		return statusCode;
-	}
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
 
-	public void getAll(Connection conn) throws SQLException {
+	public String mostAccessedPageReport(Connection conn) throws SQLException {
 		
-	
-		String selectSQL = "select file, count(file) as contador from log_access group by file order by contador desc limit 3;";
-		PreparedStatement preparedStatement = conn.prepareStatement(selectSQL);
-		ResultSet rs = preparedStatement.executeQuery(selectSQL );
+		String querySQL = "select file, count(file) as contador from " + this.table + " group by file order by contador desc limit 3;";
+		PreparedStatement preparedStatement = conn.prepareStatement(querySQL);
+		ResultSet rs = preparedStatement.executeQuery(querySQL );
+		
 		while (rs.next()) {
-			String userid = rs.getString("USER_ID");
-			String username = rs.getString("USERNAME");	
+			setContent("['" + rs.getString("file") +"',"+ rs.getInt("contador") + "],\r\n");
 		}
+		
+		return getContent();
+	}
+	
+	public String statusCodePageReport(Connection conn) throws SQLException {
+		
+		String querySQL = "select file,\r\n" + 
+				"    sum(case when status_code = 200 then 1 else 0 end) http200,\r\n" + 
+				"    sum(case when status_code = 404 then 1 else 0 end) http404,\r\n" + 
+				"	sum(case when status_code = 500 then 1 else 0 end) http500\r\n" + 
+				"from log_access\r\n" + 
+				"group by file limit 10;";
+		PreparedStatement preparedStatement = conn.prepareStatement(querySQL);
+		ResultSet rs = preparedStatement.executeQuery(querySQL);
+		
+		while (rs.next()) {
+			setContent("['" + rs.getString("file") +"',"+ rs.getInt("http200") +","+ rs.getInt("http404") +","+ rs.getInt("http500") + "],\r\n");
+		}
+		
+		return getContent();
 	}
 	
 }
