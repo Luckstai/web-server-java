@@ -1,27 +1,20 @@
 package view;
 import server.HttpRequest;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class Panel extends JFrame implements ActionListener {
 
     private static final int PORT_NUMBER = 12345;
-    private JButton btnIniciar;
-    private JButton btnParar;
+    private JButton btnStart;
+    private JButton btnStop;
     private ServerSocket socket;
     private Boolean statusServer = false;
 
@@ -30,12 +23,12 @@ public class Panel extends JFrame implements ActionListener {
         JLabel lblServidor = new JLabel("Servidor Web");
         JLabel lblStatus = new JLabel("Status: Ativo");
         JLabel lblUltimosEventos = new JLabel("Ultimos Eventos");
-        btnIniciar = new JButton("Iniciar");
-        btnParar = new JButton("Parar");
+        btnStart = new JButton("Iniciar");
+        btnStop = new JButton("Parar");
         JButton btnReiniciar = new JButton("Reiniciar");
 
-        btnIniciar.addActionListener(this);
-        btnParar.addActionListener(this);
+        btnStart.addActionListener(this);
+        btnStop.addActionListener(this);
         btnReiniciar.addActionListener(this);
         Container caixa = getContentPane();
 
@@ -61,8 +54,8 @@ public class Panel extends JFrame implements ActionListener {
 
         pnlMid.add(listUltimosEventos);
 
-        pnlBottom.add(btnIniciar);
-        pnlBottom.add(btnParar);
+        pnlBottom.add(btnStart);
+        pnlBottom.add(btnStop);
         pnlBottom.add(btnReiniciar);
 
         caixa.add(pnlTop, BorderLayout.NORTH);
@@ -77,8 +70,8 @@ public class Panel extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-
-        if(event.getSource() == btnIniciar){
+        System.out.println("ENTROU NO METODO");
+        if(event.getSource() == btnStart){
             statusServer = true;
             try {
                 socket = new ServerSocket(PORT_NUMBER);
@@ -88,7 +81,8 @@ public class Panel extends JFrame implements ActionListener {
             System.out.println("Server run in port " + PORT_NUMBER);
         }
 
-        if(event.getSource() == btnParar) {
+        if(event.getSource() == btnStop) {
+            System.out.println("PARAR SERVIDOR");
             statusServer = false;
             try {
                 socket.close();

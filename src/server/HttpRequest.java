@@ -1,41 +1,38 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import dao.ConnectionBD;
+import model.LogRequest;
+
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConnectionBD;
-import model.LogRequest;
-
 public class HttpRequest extends Thread {
 
-	static final String BASE_PATH = Paths.get(".").toAbsolutePath().normalize().toString() + "\\public";
-	//static final String BASE_PATH = RAIZ
-	//BASE_PATH = PUBLIC PAGES
-	//BASE PATH = PRIVATE PAGES
-	static final String METHOD_GET = "GET";
-	static final String METHOD_HEAD = "HEAD";
-	
-	List<String> request = new ArrayList<>();
-	
-	List<StaticPage> staticPages = new ArrayList<>();
-	
+	private static final String BASE_PATH = Paths.get(".").toAbsolutePath().normalize().toString();
+	private static final String BASE_PATH_PRIVATE_PAGES = BASE_PATH + "\\src\\pages";
+	private static final String BASE_PATH_PUBLIC_PAGES = BASE_PATH + "\\public\\pages";
+	private static final String BASE_PATH_PRIVATE = BASE_PATH + "\\src";
+	private static final String BASE_PATH_PUBLIC = BASE_PATH + "\\public";
+	private static final String METHOD_GET = "GET";
+	private static final String METHOD_HEAD = "HEAD";
+	private List<String> request = new ArrayList<>();
 	private String httpMethod;
 	private String requestedPath;
-	final private String REGEX = "\"([/])\"";
-	
+	private String requestedFile;
+	private String requestedFileExtension = "html";
+	private boolean accessPrivate = false;
+	private String FILE_DEFAULT = "index.html";
+	private int statusCode = 500;
+
 	Connection conn = null;
 	LogRequest log = null;
 	
 	String path= null;
 	String ip = null;
-	String extension = "error";
 	HttpResponse response = null;
 	Socket connectedClient = null;
 	BufferedReader requestInformation = null;	
@@ -67,17 +64,42 @@ public class HttpRequest extends Thread {
 	}
 	
 	private String getRequestedPath() {
-		return requestedPath.replaceAll(REGEX, "\\");
+		return requestedPath;
 	}
 	
 	private void setRequestedPath(String requestedPath) {
-		this.requestedPath = requestedPath;
+		String REGEX = "\"([/])\"";
+		this.requestedPath = requestedPath.replaceAll(REGEX, "\\");
 	}
-	
+
+	private String getRequestedFile(){
+		return this.requestedFile;
+	}
+
+	private void setRequestedFile(String requestedFile){
+		this.requestedFile = requestedFile;
+	}
+
+	private String getRequestedFileExtension(){
+		return this. requestedFileExtension;
+	}
+
+	private void setRequestedFileExtension(String extension){
+		this.requestedFileExtension = extension;
+	}
+
+	private void setStatusCode(int statusCode){
+		this.statusCode = statusCode;
+	}
+
+	private int getStatusCode(){
+		return this.statusCode;
+	}
+
 	private void printRequest() {
-		System.out.println("------------------------------------------------------");
-		for(int i = 0; i < request.size(); i++) {
-			System.out.println(request.get(i));
+		System.out.println("---------------------REQUEST---------------------------------");
+		for (String s : request) {
+			System.out.println(s);
 		}
 		System.out.println("------------------------------------------------------");
 	}
@@ -86,57 +108,50 @@ public class HttpRequest extends Thread {
 		switch (extension) {
 		case "html":
 			response.setContentType("text/html");
-			path = BASE_PATH + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + getRequestedPath();
 			break;
 
 		case "css":
 			response.setContentType("text/css");
-			path = BASE_PATH + "\\assets\\css" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\css" + getRequestedPath();
 			break;		
 			
 		case "js":
 			response.setContentType("application/javascript");
-			path = BASE_PATH + "\\assets\\js" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\js" + getRequestedPath();
 			break;					
 			
 		case "png":
 			response.setContentType("image/png");
-			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
 			break;	
 
 		case "jpg":
 			response.setContentType("image/jpeg");
-			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
 			break;				
 			
 		case "jpeg":
 			response.setContentType("image/jpeg");
-			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
 			break;					
 			
 		case "ico":
 			response.setContentType("image/x-icon");
-			path = BASE_PATH + "\\assets\\image" + getRequestedPath();
+			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
 			break;					
 							
 		default:
 			response.setContentType("text/html");
-			path = BASE_PATH + "\\pages\\errors\\error-400.html";
+			path = BASE_PATH_PUBLIC_PAGES + "\\pages\\errors\\error-404.html";
 			break;
 		}
 	}
 	
 	public void run() {
-		List<String> pagesToRender = new ArrayList<>();
-		String content = "";
-		int statusCode = 500;
 		byte[] fileInBytes = new byte[0];
 		int numOfBytes = 0;
-		
-		pagesToRender.add("/reports.html");
-//		pagesToRender.add("/reports2.html");
-		
-		
+
 		try {
 			System.out.println("Client " + connectedClient.getInetAddress() + ":" + connectedClient.getPort() + " connected!");
 			setIp(""+connectedClient.getInetAddress());
@@ -147,71 +162,100 @@ public class HttpRequest extends Thread {
 			}
 			
 			printRequest();
-			
-			if(getRequestedPath().equals("/")) setRequestedPath("/index.html");
-			
-			int positionPoint = getRequestedPath().lastIndexOf(".");
-			
-			if(positionPoint != -1) extension = getRequestedPath().substring(positionPoint+1);
 
-			
-			switch (getHttpMethod()) {
-			case METHOD_GET:						
-
-					this.defineRender(extension);
-					DynamicPage dynamicPages = new DynamicPage();
-					
-					if(this.getRequestedPath().equals("/reports.html")) {
-						content = dynamicPages.mostAccessedPageReport();
-					}
-
-					if(this.getRequestedPath().equals("/reports2.html")) {
-						content = dynamicPages.statusCodePageReport();
-					}
-
-					File file;
-					if(this.getRequestedPath().equals("/reports.html")) {
-						path = "C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html";
-						file = new File ("C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html");
-					} else {
-						file = new File(path);
-					}
-					
-					if(file.exists()) {
-						numOfBytes = (int) file.length();
-						FileInputStream inFile =  new FileInputStream(path);
-						fileInBytes = new byte[numOfBytes];
-						inFile.read(fileInBytes);
-					} 
-					else {
-						
-						for (String page : pagesToRender) {
-							if(getRequestedPath().equals(page)) {
-								System.out.println(getRequestedPath());
-								numOfBytes = (int) content.length();
-								fileInBytes = content.getBytes();
-							} else {
-								this.defineRender("error");
-								numOfBytes = (int) file.length();
-								FileInputStream inFile =  new FileInputStream(path);
-								fileInBytes = new byte[numOfBytes];
-								inFile.read(fileInBytes);
-							}
-						}
-					}				
-				
-				break;
-			case METHOD_HEAD:
-				
-				break;
-			default:
-		
-				break;
+			if(getRequestedPath().equals("/")){
+				setRequestedPath(FILE_DEFAULT);
 			}
+
+			int positionPoint = getRequestedPath().lastIndexOf(".");
+			int positionBarra = getRequestedPath().lastIndexOf("/");
+
+			if(positionPoint != -1) {
+				setRequestedFileExtension(getRequestedPath().substring(positionPoint+1));
+				if(getRequestedFileExtension().equals("html")){
+					setRequestedFile(getRequestedPath().substring(positionBarra+1,positionPoint));
+				}
+			} else{
+				setRequestedFile(getRequestedPath().substring(positionBarra+1));
+			}
+
+			System.out.println(" ");
+			System.out.println("URL: " + getRequestedPath());
+			System.out.println("EXTENSION: " + getRequestedFileExtension());
+			System.out.println("FILE OR DIRECTORY: " + getRequestedFile());
+
+			File privateFile;
+			privateFile = new File(BASE_PATH_PRIVATE_PAGES + getRequestedPath());
+
+			File publicFile = new File(BASE_PATH_PUBLIC_PAGES + getRequestedPath());
+			if(getRequestedPath().equals(FILE_DEFAULT)){
+				publicFile = new File(BASE_PATH_PUBLIC + "\\" +getRequestedPath());
+			}
+
+			if(privateFile.exists()){
+				if(privateFile.isDirectory()){
+					System.out.println("ERRO 403 - ACESSO NEGADO (PRIVADO)");
+					setStatusCode(403);
+				}
+			} else {
+				setRequestedPath(getRequestedPath()+".html");
+				privateFile = new File(BASE_PATH_PRIVATE_PAGES + getRequestedPath());
+
+				if(privateFile.isFile()){
+					System.out.println("ARQUIVO PRIVADO: " + privateFile.getName() + " ENCONTRADO");
+					setStatusCode(200);
+
+					this.defineRender(getRequestedFileExtension());
+					DynamicPage dynamicPages = new DynamicPage();
+					String teste = dynamicPages.mostAccessedPageReport(privateFile);
+
+					numOfBytes = teste.length();
+					fileInBytes = teste.getBytes();
+				}
+			}
+			System.out.println("Existe: " + BASE_PATH_PUBLIC_PAGES + getRequestedPath());
+			if(publicFile.exists()){
+				if(publicFile.isDirectory()){
+					System.out.println("ERRO 403 - ACESSO NEGADO (PUBLICO)");
+					setStatusCode(403);
+				} else {
+					System.out.println("ERRO 404 - PÁGINA PUBLICA NÃO ENCONTRADA");
+					setStatusCode(404);
+				}
+
+				if(publicFile.isFile()){
+					System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
+					setStatusCode(200);
+				} else {
+					System.out.println("ERRO 404 - PÁGINA PUBLICA NÃO ENCONTRADA");
+					setStatusCode(404);
+				}
+
+			} else {
+				setRequestedPath(getRequestedPath()+".html");
+				publicFile = new File(getRequestedPath() + ".html");
+
+				if(publicFile.isFile()){
+					System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
+					setStatusCode(200);
+				}
+			}
+			
+//			switch (getHttpMethod()) {
+//			case METHOD_GET:
+//
+//				break;
+//			case METHOD_HEAD:
+//
+//				break;
+//			default:
+//
+//				break;
+//			}
 			
 			conn = ConnectionBD.conectar();
 			
-			log = new LogRequest(getRequestedPath(), getHttpMethod(), getIp(), 200);
+			log = new LogRequest(getRequestedPath(), getHttpMethod(), getIp(), getStatusCode());
 			log.register(conn);
 			response.send(fileInBytes, numOfBytes);
 			

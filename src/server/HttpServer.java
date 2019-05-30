@@ -1,6 +1,7 @@
 package server;
 import view.Panel;
-public class HttpServer extends Thread {
+
+public class HttpServer {
 
 	public static void main(String args[]){
 		new Panel();

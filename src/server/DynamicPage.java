@@ -1,42 +1,49 @@
 package server;
 
+import dao.ConnectionBD;
+import model.ReportsModel;
+
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import dao.ConnectionBD;
-import model.ReportsModel;
-
 public class DynamicPage {
 
-	Connection conn = null;
-	ReportsModel model;
+	private Connection conn = null;
+	private ReportsModel model;
 	
 	public DynamicPage() throws SQLException {
 		conn = ConnectionBD.conectar();
 		model = new ReportsModel();
 	}
 	
-	public String mostAccessedPageReport() throws SQLException, IOException {
+	public String mostAccessedPageReport(File file) throws SQLException, IOException {
 		
-		String html = "";
-		File file = new File ("C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html");
-        
-		Scanner scnr = new Scanner(file);
+		StringBuilder html = new StringBuilder();
+		System.out.println(file.getAbsolutePath());
+		System.out.println();
+
+		File fileTemplate = new File(file.getAbsolutePath().replace(".html","-template.html"));
+
+		Scanner scnr = new Scanner(fileTemplate);
         while(scnr.hasNextLine()){
-            html += scnr.nextLine();
+            html.append(scnr.nextLine());
         }
 		scnr.close();
-        html = html.replace("{{TAG-INFO}}", "['hoje',10],['amanha',50]");
-     // write the new string with the replaced line OVER the same file
-        FileOutputStream fileOut = new FileOutputStream("C:\\Users\\lucas.silva.araujo\\Documents\\www\\web-server\\src\\pages\\test.html");
-        fileOut.write(html.getBytes(StandardCharsets.UTF_8));
-        fileOut.close();
-        return html;
+
+        html = new StringBuilder(html.toString().replace("{{TAG-INFO}}", model.mostAccessedPageReport(conn)));
+
+        //limpo o arquivo
+        new FileWriter(file.getAbsoluteFile()).close();
+
+//		//Escrevo no arquivo
+//        FileOutputStream fileOut = new FileOutputStream(file);
+//        fileOut.write(html.toString().getBytes(StandardCharsets.UTF_8));
+//        fileOut.close();
+		return html.toString();
 	}
 	
 	public String statusCodePageReport() throws SQLException {
