@@ -22,8 +22,10 @@ public class Panel extends JFrame implements ActionListener {
     private static final int PORT_NUMBER = 12345;
     private JButton btnIniciar;
     private JButton btnParar;
+    private JButton btnReiniciar;
     private ServerSocket socket;
     private Boolean statusServer = false;
+    private Thread execucao;
 
     public Panel() {
         super ("WebServer Grupo 10");
@@ -32,7 +34,7 @@ public class Panel extends JFrame implements ActionListener {
         JLabel lblUltimosEventos = new JLabel("Ultimos Eventos");
         btnIniciar = new JButton("Iniciar");
         btnParar = new JButton("Parar");
-        JButton btnReiniciar = new JButton("Reiniciar");
+        btnReiniciar = new JButton("Reiniciar");
 
         btnIniciar.addActionListener(this);
         btnParar.addActionListener(this);
@@ -75,36 +77,76 @@ public class Panel extends JFrame implements ActionListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
+    private void closeSocket(){
+        String message = "Não é possível parar/reiniciar, o servidor já está parado!";
+        if(!socket.isClosed()){
+            if(socket.isBound()){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                statusServer = false;
+                execucao.interrupt();
+                message = "Server stoped";
+            }
+        }
+        System.out.println(message);
+    }
+
+    private void restartSocket(){
+        String message = "Não é possível parar/reiniciar, o servidor já está parado!";
+        if(!socket.isClosed()){
+            if(socket.isBound()){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                statusServer = false;
+                execucao.interrupt();
+                startSocket();
+            }
+        }
+        System.out.println(message);
+    }
+
+    private void startSocket(){
+        statusServer = true;
+        execucao.start();
+    }
+
     @Override
     public void actionPerformed(ActionEvent event) {
-
-        if(event.getSource() == btnIniciar){
-            statusServer = true;
+        execucao = new Thread(() -> {
             try {
                 socket = new ServerSocket(PORT_NUMBER);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
             System.out.println("Server run in port " + PORT_NUMBER);
+
+            while (statusServer){
+                Socket connected = null;
+                try {
+                    connected = socket.accept();
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
+                (new HttpRequest(connected)).start();
+            }
+        });
+
+        if(event.getSource() == btnIniciar){
+            startSocket();
         }
 
         if(event.getSource() == btnParar) {
-            statusServer = false;
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            closeSocket();
         }
 
-        while (statusServer) {
-            Socket connected = null;
-            try {
-                connected = socket.accept();
-            } catch (IOException e2) {
-                e2.printStackTrace();
-            }
-            (new HttpRequest(connected)).start();
+        if(event.getSource() == btnReiniciar) {
+            restartSocket();
         }
     }
 }
