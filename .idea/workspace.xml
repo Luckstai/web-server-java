@@ -2,23 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dff3ff6e-86c5-487e-8053-6ff7c6f05309" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/public/pages/carros.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/pages/errors/coco.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/dashboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/reports-template.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/reports.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/lucas_silva_araujo.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/error-404.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/pages/errors/error-404.html" beforeDir="false" afterPath="$PROJECT_DIR$/bin/pages/errors/error-404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/pages/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/bin/pages/reports.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/server/DynamicPage.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/server/DynamicPage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/server/HttpRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/server/HttpRequest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/view/Panel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/view/Panel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/error-404.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/pages/error-404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/pages/errors/error-404.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/pages/errors/error-404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/DynamicPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DynamicPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/HttpRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/HttpRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/HttpServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/HttpServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/Panel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/Panel.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -36,18 +23,31 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/HttpRequest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="167" column="13" lean-forward="true" selection-start-line="167" selection-start-column="13" selection-end-line="167" selection-end-column="13" />
+            <state relative-caret-position="-1400">
+              <caret line="167" column="13" selection-start-line="167" selection-start-column="13" selection-end-line="167" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#HttpRequest#0;class#HttpRequest#0" />
                 <element signature="method#makeRequest#0;class#HttpRequest#0" />
-                <element signature="e#2393#2394#0" expanded="true" />
-                <element signature="e#2420#2421#0" expanded="true" />
-                <element signature="e#2459#2460#0" expanded="true" />
-                <element signature="e#2476#2477#0" expanded="true" />
                 <element signature="method#printRequest#0;class#HttpRequest#0" />
                 <element signature="method#defineRender#0;class#HttpRequest#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/view/Panel.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="21">
+              <caret line="1" column="2" lean-forward="true" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
+              <folding>
+                <element signature="e#0#578#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -56,37 +56,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/view/Panel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="90" column="13" lean-forward="true" selection-start-line="90" selection-start-column="13" selection-end-line="90" selection-end-column="13" />
+            <state relative-caret-position="994">
+              <caret line="68" column="48" lean-forward="true" selection-start-line="68" selection-start-column="48" selection-end-line="68" selection-end-column="48" />
               <folding>
                 <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/DynamicPage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="41" column="28" lean-forward="true" selection-start-line="41" selection-start-column="28" selection-end-line="41" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pages/reports.html">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/HttpServer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="8" column="1" lean-forward="true" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
-              <folding>
-                <element signature="e#102#103#0" expanded="true" />
-                <element signature="e#120#121#0" expanded="true" />
+                <element signature="e#239#266#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -104,7 +78,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>btnIniciar</find>
       <find>btnParar</find>
       <find>pagesToRender</find>
       <find>Boolean</find>
@@ -114,6 +87,7 @@
       <find>setRequestedFile</find>
       <find>statusCode</find>
       <find>html</find>
+      <find>btnIniciar</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -148,6 +122,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -158,31 +133,29 @@
             <path>
               <item name="web-server" type="b2602c69:ProjectViewProjectNode" />
               <item name="web-server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="web-server" type="b2602c69:ProjectViewProjectNode" />
               <item name="web-server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="web-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="web-server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
               <item name="view" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="web-server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="web-server" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559176243047" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559608434280" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
@@ -263,7 +236,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14496644" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14697987" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -318,6 +291,38 @@
       <window_info anchor="right" id="Ant Build" order="6" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="7" weight="0.25" />
     </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/javax/swing/JFrame.java">
@@ -452,28 +457,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/server/HttpRequest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="167" column="13" lean-forward="true" selection-start-line="167" selection-start-column="13" selection-end-line="167" selection-end-column="13" />
+        <state relative-caret-position="-1400">
+          <caret line="167" column="13" selection-start-line="167" selection-start-column="13" selection-end-line="167" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#HttpRequest#0;class#HttpRequest#0" />
             <element signature="method#makeRequest#0;class#HttpRequest#0" />
-            <element signature="e#2393#2394#0" expanded="true" />
-            <element signature="e#2420#2421#0" expanded="true" />
-            <element signature="e#2459#2460#0" expanded="true" />
-            <element signature="e#2476#2477#0" expanded="true" />
             <element signature="method#printRequest#0;class#HttpRequest#0" />
             <element signature="method#defineRender#0;class#HttpRequest#0" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/view/Panel.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" column="2" lean-forward="true" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
+          <folding>
+            <element signature="e#0#578#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/view/Panel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="90" column="13" lean-forward="true" selection-start-line="90" selection-start-column="13" selection-end-line="90" selection-end-column="13" />
+        <state relative-caret-position="994">
+          <caret line="68" column="48" lean-forward="true" selection-start-line="68" selection-start-column="48" selection-end-line="68" selection-end-column="48" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#239#266#0" expanded="true" />
           </folding>
         </state>
       </provider>
