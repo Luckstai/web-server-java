@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class HttpRequest extends Thread {
 
@@ -27,15 +28,15 @@ public class HttpRequest extends Thread {
 	private boolean accessPrivate = false;
 	private String FILE_DEFAULT = "index.html";
 	private int statusCode = 500;
+	private String route;
 
 	Connection conn = null;
 	LogRequest log = null;
-	
-	String path= null;
-	String ip = null;
-	HttpResponse response = null;
-	Socket connectedClient = null;
-	BufferedReader requestInformation = null;	
+
+	String ip;
+	HttpResponse response;
+	Socket connectedClient;
+	BufferedReader requestInformation;
 	
 	public String getIp() {
 		return ip;
@@ -108,46 +109,78 @@ public class HttpRequest extends Thread {
 		switch (extension) {
 		case "html":
 			response.setContentType("text/html");
-			path = BASE_PATH_PUBLIC_PAGES + getRequestedPath();
+			route = BASE_PATH_PRIVATE_PAGES + getRequestedPath();
 			break;
 
 		case "css":
 			response.setContentType("text/css");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\css" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\css" + getRequestedPath();
 			break;		
 			
 		case "js":
 			response.setContentType("application/javascript");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\js" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\js" + getRequestedPath();
 			break;					
 			
 		case "png":
 			response.setContentType("image/png");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\image" + getRequestedPath();
 			break;	
 
 		case "jpg":
 			response.setContentType("image/jpeg");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\image" + getRequestedPath();
 			break;				
 			
 		case "jpeg":
 			response.setContentType("image/jpeg");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\image" + getRequestedPath();
 			break;					
 			
 		case "ico":
 			response.setContentType("image/x-icon");
-			path = BASE_PATH_PUBLIC_PAGES + "\\assets\\image" + getRequestedPath();
+			route = BASE_PATH_PUBLIC + "\\assets\\image" + getRequestedPath();
 			break;					
 							
 		default:
 			response.setContentType("text/html");
-			path = BASE_PATH_PUBLIC_PAGES + "\\pages\\errors\\error-404.html";
+			route = BASE_PATH_PUBLIC_PAGES + "\\pages\\errors\\error-404.html";
 			break;
 		}
 	}
-	
+
+	private boolean isPrivate = false;
+	private String fileIsPrivateMessage = "ERRO 404 - ESSA PÁGINA PRIVADA NÃO EXISTE";
+	private int fileSprivateStatusCode = 404;
+
+	private boolean fileIsPrivate(String path){
+		File file = new File(path);
+
+		if(file.exists()){
+			if(file.isDirectory()){
+				fileIsPrivateMessage = "ERRO 403 - ACESSO NEGADO AO DIRETÓRIO PRIVADO";
+				fileSprivateStatusCode = 403;
+			}
+		}
+		else{
+			File fileWithExtension = new File(path+".html");
+
+			if(fileWithExtension.exists()){
+				if(fileWithExtension.isFile()){
+					route = path+".html";
+					fileIsPrivateMessage = "SUCCESS - ARQUIVO PRIVADO ENCONTRADO";
+					fileSprivateStatusCode = 200;
+					isPrivate = true;
+				}
+			}
+		}
+
+		setStatusCode(fileSprivateStatusCode);
+		System.out.println(fileIsPrivateMessage);
+
+		return isPrivate;
+	}
+
 	public void run() {
 		byte[] fileInBytes = new byte[0];
 		int numOfBytes = 0;
@@ -161,7 +194,7 @@ public class HttpRequest extends Thread {
 				makeRequest(requestInformation.readLine());
 			}
 			
-			printRequest();
+//			printRequest();
 
 			if(getRequestedPath().equals("/")){
 				setRequestedPath(FILE_DEFAULT);
@@ -172,6 +205,7 @@ public class HttpRequest extends Thread {
 
 			if(positionPoint != -1) {
 				setRequestedFileExtension(getRequestedPath().substring(positionPoint+1));
+				setRequestedFile(getRequestedPath().substring(positionBarra+1));
 				if(getRequestedFileExtension().equals("html")){
 					setRequestedFile(getRequestedPath().substring(positionBarra+1,positionPoint));
 				}
@@ -179,67 +213,101 @@ public class HttpRequest extends Thread {
 				setRequestedFile(getRequestedPath().substring(positionBarra+1));
 			}
 
+			this.defineRender(getRequestedFileExtension());
+
 			System.out.println(" ");
 			System.out.println("URL: " + getRequestedPath());
 			System.out.println("EXTENSION: " + getRequestedFileExtension());
 			System.out.println("FILE OR DIRECTORY: " + getRequestedFile());
 
-			File privateFile;
-			privateFile = new File(BASE_PATH_PRIVATE_PAGES + getRequestedPath());
+			if(fileIsPrivate(route)){
+				System.out.println("É PRIVADO");
+				DynamicPage dynamicPages = new DynamicPage();
+				String teste = dynamicPages.mostAccessedPageReport(new File(route));
 
-			File publicFile = new File(BASE_PATH_PUBLIC_PAGES + getRequestedPath());
-			if(getRequestedPath().equals(FILE_DEFAULT)){
-				publicFile = new File(BASE_PATH_PUBLIC + "\\" +getRequestedPath());
+				numOfBytes = teste.length();
+				fileInBytes = teste.getBytes();
+			}
+			else{
+				File publicFile = new File(route);
+				if(getRequestedPath().equals(FILE_DEFAULT)){
+					route = BASE_PATH_PUBLIC + "\\" +getRequestedPath();
+				}
+				if(publicFile.exists()){
+					if(publicFile.isDirectory()){
+						System.out.println("ERRO 403 - ACESSO NEGADO (PUBLICO)");
+						setStatusCode(403);
+					}
+
+					else if(publicFile.isFile()){
+						System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
+						setStatusCode(200);
+						StringBuilder html = new StringBuilder();
+						Scanner scnr = new Scanner(publicFile);
+						while(scnr.hasNextLine()){
+							html.append(scnr.nextLine());
+						}
+						scnr.close();
+						html = new StringBuilder(html.toString());
+						numOfBytes = html.length();
+						fileInBytes = html.toString().getBytes();
+					}
+					else {
+						System.out.println("ERRO 404 - PÁGINA PUBLICA NÃO ENCONTRADA");
+						setStatusCode(404);
+					}
+				}
+				else {
+					setRequestedPath(getRequestedPath()+".html");
+					publicFile = new File(getRequestedPath() + ".html");
+
+					if(publicFile.isFile()){
+						System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
+						setStatusCode(200);
+						StringBuilder html = new StringBuilder();
+						Scanner scnr = new Scanner(publicFile);
+						while(scnr.hasNextLine()){
+							html.append(scnr.nextLine());
+						}
+						scnr.close();
+						html = new StringBuilder(html.toString());
+						numOfBytes = html.length();
+						fileInBytes = html.toString().getBytes();
+					}
+				}
 			}
 
-			if(privateFile.exists()){
-				if(privateFile.isDirectory()){
-					System.out.println("ERRO 403 - ACESSO NEGADO (PRIVADO)");
-					setStatusCode(403);
-				}
-			} else {
-				setRequestedPath(getRequestedPath()+".html");
-				privateFile = new File(BASE_PATH_PRIVATE_PAGES + getRequestedPath());
+//			System.exit(0);
 
-				if(privateFile.isFile()){
-					System.out.println("ARQUIVO PRIVADO: " + privateFile.getName() + " ENCONTRADO");
-					setStatusCode(200);
 
-					this.defineRender(getRequestedFileExtension());
-					DynamicPage dynamicPages = new DynamicPage();
-					String teste = dynamicPages.mostAccessedPageReport(privateFile);
+//			if(privateFile.exists()){
+//				if(privateFile.isDirectory()){
+//					System.out.println("ERRO 403 - ACESSO NEGADO (PRIVADO)");
+//					setStatusCode(403);
+//				} else {
+//					System.out.println("ERRO 404 - ESSA PÁGINA NÃO EXISTE");
+//					setStatusCode(404);
+//				}
+//			}
+//			else {
+//				if(!publicFile.exists()){
+//					setRequestedPath(getRequestedPath()+".html");
+//					privateFile = new File(BASE_PATH_PRIVATE_PAGES + getRequestedPath());
+//
+//					if(privateFile.isFile()){
+//						System.out.println("ARQUIVO PRIVADO: " + privateFile.getName() + " ENCONTRADO");
+//						setStatusCode(200);
+//
+//						DynamicPage dynamicPages = new DynamicPage();
+//						String teste = dynamicPages.mostAccessedPageReport(privateFile);
+//
+//						numOfBytes = teste.length();
+//						fileInBytes = teste.getBytes();
+//					}
+//				}
+//			}
 
-					numOfBytes = teste.length();
-					fileInBytes = teste.getBytes();
-				}
-			}
-			System.out.println("Existe: " + BASE_PATH_PUBLIC_PAGES + getRequestedPath());
-			if(publicFile.exists()){
-				if(publicFile.isDirectory()){
-					System.out.println("ERRO 403 - ACESSO NEGADO (PUBLICO)");
-					setStatusCode(403);
-				} else {
-					System.out.println("ERRO 404 - PÁGINA PUBLICA NÃO ENCONTRADA");
-					setStatusCode(404);
-				}
 
-				if(publicFile.isFile()){
-					System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
-					setStatusCode(200);
-				} else {
-					System.out.println("ERRO 404 - PÁGINA PUBLICA NÃO ENCONTRADA");
-					setStatusCode(404);
-				}
-
-			} else {
-				setRequestedPath(getRequestedPath()+".html");
-				publicFile = new File(getRequestedPath() + ".html");
-
-				if(publicFile.isFile()){
-					System.out.println("ARQUIVO PUBLICO: " + publicFile.getName() + " ENCONTRADO");
-					setStatusCode(200);
-				}
-			}
 			
 //			switch (getHttpMethod()) {
 //			case METHOD_GET:
