@@ -4,8 +4,10 @@ import dao.ConnectionBD;
 import model.ReportsModel;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -20,11 +22,9 @@ public class DynamicPage {
 		model = new ReportsModel();
 	}
 	
-	public String mostAccessedPageReport(File file) throws SQLException, IOException {
+	public void mostAccessedPageReport(File file) throws SQLException, IOException {
 		
 		StringBuilder html = new StringBuilder();
-		System.out.println(file.getAbsolutePath());
-		System.out.println();
 
 		File fileTemplate = new File(file.getAbsolutePath().replace(".html","-template.html"));
 
@@ -39,11 +39,11 @@ public class DynamicPage {
         //limpo o arquivo
         new FileWriter(file.getAbsoluteFile()).close();
 
-//		//Escrevo no arquivo
-//        FileOutputStream fileOut = new FileOutputStream(file);
-//        fileOut.write(html.toString().getBytes(StandardCharsets.UTF_8));
-//        fileOut.close();
-		return html.toString();
+		//Escrevo no arquivo
+        FileOutputStream fileOut = new FileOutputStream(file);
+        fileOut.write(html.toString().getBytes(StandardCharsets.UTF_8));
+        fileOut.close();
+//		return html.toString();
 	}
 	
 	public String statusCodePageReport() throws SQLException {

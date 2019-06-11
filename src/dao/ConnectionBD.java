@@ -18,7 +18,7 @@ public class ConnectionBD {
 	public static Connection conectar() throws SQLException{
 		String servidor = "localhost";
 		String porta = "3306";
-		String database = "web_server_pi7";
+		String database = "web_server";
 		String usuario = "Alunos";
 		String senha = "alunos";
 		String host = "jdbc:mysql://";
