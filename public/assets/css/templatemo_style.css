@@ -68,7 +68,7 @@ img {
 }
 
 .img_frame_13 span { 
-	background: url(../images/templatemo_image_frame_13.png); 
+	background: url(../image/templatemo_image_frame_13.png);
 	width: 300px; 
 	height: 177px; 
 }
@@ -79,7 +79,7 @@ img {
 }
 
 .img_frame_14 span { 
-	background: url(../images/templatemo_image_frame_14.png); 
+	background: url(../image/templatemo_image_frame_14.png);
 	width: 217px; 
 	height: 122px; 
 }
@@ -90,7 +90,7 @@ img {
 }
 
 .img_frame_23 span { 
-	background: url(../images/templatemo_image_frame_23.png); 
+	background: url(../image/templatemo_image_frame_23.png);
 	width: 630px; 
 	height: 230px; 
 }
@@ -132,7 +132,7 @@ a.more {
 	color: #333; 
 	text-align: center; 
 	text-decoration: none; 
-	background: url(../images/templatemo_button.png) no-repeat; 
+	background: url(../image/templatemo_button.png) no-repeat;
 	border: none;  
 	cursor: pointer; 
 }
@@ -150,7 +150,7 @@ p { margin: 0 0 15px 0 }
 	color:#e4e4da; 
 	margin: 0 0 7px 0; 
 	padding: 0 0 0 30px; 
-	background: url(../images/templatemo_bullet.png) no-repeat scroll 0 3px;  
+	background: url(../image/templatemo_bullet.png) no-repeat scroll 0 3px;
 }
 
 .list_bullet li a { 
@@ -187,12 +187,12 @@ a.header {
 #templatemo_header_wrapper {
 	width: 100%;
 	min-height: 160px;
-	background: url(../images/templatemo_header.png) repeat-x top
+	background: url(../image/templatemo_header.png) repeat-x top
 }
 
 #templatemo_footer_wrapper {
 	width: 100%;
-	background: url(../images/templatemo_footer.png) repeat-x top
+	background: url(../image/templatemo_footer.png) repeat-x top
 }
 
 #templatemo_header, #templatemo_main, #templatemo_footer {
@@ -213,7 +213,7 @@ a.header {
 	height: 54px; 
 	color: #acacac; 
 	text-indent: -10000px; 
-	background: url(../images/templatemo_logo.png) no-repeat top left; 
+	background: url(../image/templatemo_logo.png) no-repeat top left;
 }
 
 #templatemo_menu { 
@@ -225,7 +225,7 @@ a.header {
 	width: 100%;
 	height: 331px;
 	margin-top: 20px;
-	background: url(../images/templatemo_slider_bg.png)
+	background: url(../image/templatemo_slider_bg.png)
 }
 
 #templatemo_slider {
@@ -351,7 +351,7 @@ a.header {
 	height: 28px; 
 	color: #333; 
 	margin: 10px 0px;
-	background: url(../images/templatemo_button.png) no-repeat;
+	background: url(../image/templatemo_button.png) no-repeat;
  	border: none;  
  	cursor: pointer; 
 }
@@ -419,7 +419,7 @@ a.header {
 	line-height: 28px; 
 	color: #333; 
 	margin: 10px 0px;
-	background: url(../images/templatemo_button.png) no-repeat;
+	background: url(../image/templatemo_button.png) no-repeat;
  	border: none;  
  	cursor: pointer; 
 }

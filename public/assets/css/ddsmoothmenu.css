@@ -38,7 +38,7 @@ display: inline-block;
 }
 
 .ddsmoothmenu ul li a.selected, .ddsmoothmenu ul li a:hover { /*CSS class that's dynamically added to the currently active menu items' LI A element*/
-	background: url(../../images/templatemo_menu_hover.png);
+	background: url(../../image/templatemo_menu_hover.png);
 	color: #333
 }
 
@@ -93,7 +93,7 @@ top: 0;
 * html .ddsmoothmenu{height: 1%;} /*Holly Hack for IE7 and below*/
 
 
-/* ######### CSS classes applied to down and right arrow images  ######### */
+/* ######### CSS classes applied to down and right arrow image  ######### */
 
 .downarrowclass{
 position: absolute;

@@ -163,44 +163,46 @@ public class HttpRequest extends Thread {
         }
     }
 
-    private String fileIsPrivateMessage = "ERRO 404 - ESSA PÁGINA NÃO EXISTE (contexto privado)";
+    private String fileIsPrivateMessage = "ERRO 404 - ESSA PÁGINA NÃO EXISTE (contexto DEFAULT)";
     private int fileSprivateStatusCode = 404;
 
     private File validExistisFile(String path) throws SQLException, IOException {
         File publicFile = new File(BASE_PATH_PUBLIC_PAGES + path);
-        File publicFileWithExtension = new File(BASE_PATH_PUBLIC_PAGES + path + ".html");
-        File privateFile = new File(BASE_PATH_PRIVATE_PAGES + path);
-        File privateFileWithExtension = new File(BASE_PATH_PRIVATE_PAGES + path +".html");
+        File publicFileWithExtension = new File(BASE_PATH_PUBLIC_PAGES + path);
+//        File fileAssets = new File(BASE_PATH_PUBLIC + path);
         File indexFile = new File(BASE_PATH_PUBLIC + path);
         File fileResult = null;
 
         System.out.println("publicFile" + BASE_PATH_PUBLIC_PAGES + path);
-        System.out.println("publicFileWithExtension" + BASE_PATH_PUBLIC_PAGES + path + ".html");
+        System.out.println("publicFileWithExtension" + BASE_PATH_PUBLIC_PAGES + path);
         System.out.println("privateFile" + BASE_PATH_PRIVATE_PAGES + path);
         System.out.println("privateFileWithExtension" + BASE_PATH_PRIVATE_PAGES + path + ".html");
         System.out.println("indexFile" + BASE_PATH_PUBLIC + path);
 
-        System.out.println("EXISTE: " + privateFileWithExtension.exists());
 
+        if(getRequestedFileExtension().equals("html")){
+            File privateFile = new File(BASE_PATH_PRIVATE_PAGES + path);
+            File privateFileWithExtension = new File(BASE_PATH_PRIVATE_PAGES + path +".html");
 
-        if(privateFile.exists() || privateFileWithExtension.exists()){
+            if(privateFile.exists() || privateFileWithExtension.exists()){
 
-            if(privateFile.exists()){
-                if(privateFile.isDirectory()){
-                    fileIsPrivateMessage = "ERRO 403 - ACESSO NEGADO AO DIRETÓRIO PRIVADO";
-                    fileSprivateStatusCode = 403;
+                if(privateFile.exists()){
+                    if(privateFile.isDirectory()){
+                        fileIsPrivateMessage = "ERRO 403 - ACESSO NEGADO AO DIRETÓRIO PRIVADO";
+                        fileSprivateStatusCode = 403;
+                    }
                 }
-            }
 
-            if(privateFileWithExtension.exists()){
-                if(privateFileWithExtension.isFile()){
-                    fileIsPrivateMessage = "SUCCESS - ARQUIVO ENCONTRADO (contexto privado)";
-                    fileSprivateStatusCode = 200;
+                if(privateFileWithExtension.exists()){
+                    if(privateFileWithExtension.isFile()){
+                        fileIsPrivateMessage = "SUCCESS - ARQUIVO ENCONTRADO (contexto privado)";
+                        fileSprivateStatusCode = 200;
 
-                    DynamicPage dynamicPages = new DynamicPage();
-                    dynamicPages.mostAccessedPageReport(privateFileWithExtension);
+                        DynamicPage dynamicPages = new DynamicPage();
+                        dynamicPages.mostAccessedPageReport(privateFileWithExtension);
 
-                    fileResult = new File(privateFileWithExtension.getAbsolutePath());
+                        fileResult = new File(privateFileWithExtension.getAbsolutePath());
+                    }
                 }
             }
         }
@@ -226,6 +228,14 @@ public class HttpRequest extends Thread {
                     fileSprivateStatusCode = 200;
                     fileResult = publicFileWithExtension;
                 }
+                else{
+                    File teste = new File(publicFileWithExtension.getAbsolutePath()  + ".html");
+                    if(teste.isFile()){
+                        fileIsPrivateMessage = "ARQUIVO " + teste.getName() + " ENCONTRADO (contexto publico)";
+                        fileSprivateStatusCode = 200;
+                        fileResult = teste;
+                    }
+                }
             }
         }
 
@@ -244,8 +254,8 @@ public class HttpRequest extends Thread {
     }
 
     public void run() {
-        byte[] fileInBytes = new byte[0];
-        int numOfBytes = 0;
+        byte[] fileInBytes;
+        int numOfBytes;
 
         try {
             System.out.println("Client " + connectedClient.getInetAddress() + ":" + connectedClient.getPort() + " connected!");
@@ -274,7 +284,8 @@ public class HttpRequest extends Thread {
                 setRequestedFileExtension(extension);
 
                 if(getRequestedFileExtension().equals("html")){
-                    setRequestedFile(getRequestedPath().substring(positionBarra+1,positionPoint));
+                    setRequestedPath("\\" + getRequestedPath());
+                    setRequestedFile(getRequestedPath().substring(positionBarra+1,positionPoint+1));
                 }
             }
 
@@ -284,18 +295,18 @@ public class HttpRequest extends Thread {
             System.out.println("URL: " + getRequestedPath());
             System.out.println("EXTENSION: " + getRequestedFileExtension());
             System.out.println("FILE OR DIRECTORY: " + getRequestedFile());
+            System.out.println(" ");
 
             File page = validExistisFile(getRequestedPath());
 
             System.out.println("deu certo???");
             System.out.println(page.getAbsolutePath());
 
-			System.exit(0);
 
-            numOfBytes = (int)page.length();
+            numOfBytes = (int) page.length();
             FileInputStream infile = new FileInputStream(page.getAbsolutePath());
             fileInBytes = new byte[numOfBytes];
-            infile.read();
+            infile.read(fileInBytes);
 
 //			switch (getHttpMethod()) {
 //			case METHOD_GET:
